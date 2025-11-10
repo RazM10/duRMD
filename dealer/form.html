@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>du | Dealer Add</title>
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Dealer Registration</h1>
+        <div class="card">
+            <div class="icon">✉️</div>
+            <h2>Form</h2>
+            <p>Add a new dealer here, adding proper details.
+            </p>
+            <form id="form">
+              <div class="form-group">
+                <label for="id">Id</label>
+                <input type="number" id="id" placeholder="Category Id">
+              </div>
+              <div class="form-group">
+                <label for="company">Company</label>
+                <input type="text" id="cname" placeholder="Company Name">
+              </div>
+              <div class="form-group">
+                <label for="dealer">Dealer</label>
+                <input type="text" id="dname" placeholder="Dealer Name">
+              </div>
+              <div class="form-group">
+                <label for="dealer">Contact</label>
+                <input type="text" id="contact" placeholder="Contact Number">
+              </div>
+              <!-- <div class="form-group">
+                <label for="select">Select</label>
+                <select id="select">
+                  <option value="el">Elect</option>
+                </select>
+              </div> -->
+              <button type="submit" id="btn">Save</button>
+            </form>
+        </div>
+       
+        <div class="footer">
+          <a href="../index.html">Home</a>
+          <a href="../category/index.html">Category</a>
+          <a href="../item/index.html">Item</a>
+          <a href="../dealer/index.html">Dealer</a>
+          <a href="../purchase/index.html">Purchases</a>
+          <a href="../category/form.html">Category Form</a>
+          <a href="../item/form.html">Item Form</a>
+          <a href="../dealer/form.html">Dealer Form</a>
+          <a href="../purchase/form.html">Purchase Form</a>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
+    <script src="../js/ls.js"></script>
+    <script src="../js/notification.js"></script>
+    <script src="./form.js"></script>
+</body>
+</html>

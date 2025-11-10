@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>du | RMD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+    :root {
+      --primary_red: #e60073;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f7f7;
+      color: #333;
+    }
+
+    /* Header */
+    .header {
+      background: #e60073;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      color: #fff;
+    }
+    .header img {
+      width: 130px;
+      height: 80px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .header .info h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .header .balance {
+      background: #fff;
+      color: #e60073;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: inline-block;
+    }
+    
+    /* Service Grid */
+    .services {
+      background: #fff;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      text-align: center;
+    }
+    .services div {
+      font-size: 12px;
+      color: #666;
+    }
+    .services div img {
+      width: 40px;
+      margin-bottom: 5px;
+    }
+    .services div i {
+      color: var(--primary_red);
+      width: 40px;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    
+    /* My bKash */
+    .mybkash {
+      margin-top: 10px;
+      background: #fff;
+      padding: 10px;
+      display: flex;
+      justify-content: space-around;
+      font-size: 12px;
+    }
+    .mybkash div {
+      text-align: center;
+    }
+    .mybkash div img {
+      width: 40px;
+      margin-bottom: 5px;
+    }
+    
+    /* Banner */
+    .banner {
+      margin: 10px;
+      background: #e60073;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    
+    /* Suggestions */
+    .suggestions {
+      background: #fff;
+      padding: 10px;
+      margin: 10px;
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+    }
+    .suggestions div {
+      flex: 0 0 auto;
+      text-align: center;
+      font-size: 12px;
+    }
+    .suggestions div img {
+      width: 50px;
+      margin-bottom: 5px;
+    }
+    
+    /* section retrieve data */
+    .section {
+      background: #fff;
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .section h3 {
+      font-size: 14px;
+      margin: 0 0 10px;
+      color: #333;
+    }
+    .amount-details p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #444;
+      display: flex;
+      justify-content: space-between;
+    }
+    .amount-details p.total {
+      font-weight: bold;
+      font-size: 15px;
+      color: #000;
+      margin-top: 10px;
+    }
+   
+    
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #e60073;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      color: #fff;
+      font-size: 14px;
+    }
+    .bottom-nav div {
+      text-align: center;
+    }
+    .bottom-nav .scan {
+      background: #fff;
+      color: #e60073;
+      padding: 10px;
+      border-radius: 50%;
+      margin-top: -30px;
+    }
+    </style>
+</head>
+<body>
+    
+  <!-- Header -->
+  <div class="header">
+    <img src="durmd.svg" alt="Logo">    
+    <div class="info">
+      <h3>Sohel Rana</h3>
+      <div class="balance">৳ Tab for Balance</div>
+    </div>
+  </div>
+  
+  <!-- Services -->
+  <div class="services">
+    <div><a href="./category/index.html"><i class="fas fa-icons"></i></a><br>Category</div>
+    <div><a href="./dealer/index.html"><i class="fas fa-truck"></i></a><br>Dealer</div>
+    <div><a href="./item/index.html"><i class="fas fa-window-restore"></i></a><br>Item</div>
+    <div><a href="./purchase/index.html"><i class="fas fa-cart-shopping"></i></a><br>Purchase</div>
+    <div><img src="https://via.placeholder.com/40"><br>Add Money</div>
+    <div><img src="https://via.placeholder.com/40"><br>Pay Bill</div>
+    <div><img src="https://via.placeholder.com/40"><br>Tickets</div>
+    <div><img src="https://via.placeholder.com/40"><br>More</div>
+  </div>
+
+  <!-- My bKash -->
+  <div class="mybkash">
+    <div><img src="https://via.placeholder.com/40"><br>Sohel Rana</div>
+    <div><img src="https://via.placeholder.com/40"><br>Akash</div>
+    <div><img src="https://via.placeholder.com/40"><br>Internet</div>
+    <div><img src="https://via.placeholder.com/40"><br>Cash</div>
+  </div>
+  
+  <!-- Banner -->
+  <div class="banner">
+    বিল বিকাশ করলেই ৫% ক্যাশব্যাক
+  </div>
+  
+  <!-- Suggestions -->
+  <div class="suggestions">
+    <div><img src="https://via.placeholder.com/50"><br>VISA</div>
+    <div><img src="https://via.placeholder.com/50"><br>BTCL</div>
+    <div><img src="https://via.placeholder.com/50"><br>CoronaBD</div>
+    <div><img src="https://via.placeholder.com/50"><br>Donate</div>
+    <div><img src="https://via.placeholder.com/50"><br>VISA</div>
+    <div><img src="https://via.placeholder.com/50"><br>BTCL</div>
+    <div><img src="https://via.placeholder.com/50"><br>CoronaBD</div>
+    <div><img src="https://via.placeholder.com/50"><br>Donate</div>
+  </div>
+  
+  <!-- amounit details -->
+  <div class="section amount-details">
+      <h>Fetch Data</h3>
+      <p><span>Visa …9106</span><span>AED 150.00</span></p>
+      <p><span>Transfer fee</span><span>AED 0.00</span></p>
+      <p class="total" id="category_fetch_btn"><span>Category</span><span id="category_fetch_time">Time</span></p>
+      <p class="total" id="dealer_fetch_btn"><span>Dealer</span><span id="dealer_fetch_time">Time</span></p>
+      <p class="total" id="item_fetch_btn"><span>Item</span><span id="item_fetch_time">Time</span></p>
+      <p class="total" id="purchase_fetch_btn"><span>Purchase</span><span id="purchase_fetch_time">Time</span></p>
+      <p class="total" id="unit_fetch_btn"><span>Unit</span><span id="unit_fetch_time">Time</span></p>
+    </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div>Home</div>
+    <div class="scan">Scan QR</div>
+    <div>Inbox</div>
+  </div>
+  
+  
+  <!-- script -->
+  <script src="./js/date.js"></script>
+  <script src="./js/ls.js"></script>
+  <script src="./js/raw_links.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/index.js"></script>
+</body>
+</html>

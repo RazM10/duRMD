@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>du | Category Add</title>
+    <style>
+    :root {
+        --primary: #4361ee;
+        --secondary: #3f37c9;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --dark: #2b2d42;
+        --light: #f8f9fa;      
+        --gray: #8d99ae;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #fff;
+      color: #24292f;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .card {
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: left;
+    }
+    .icon {
+      text-align: center;
+      font-size: 40px;
+      margin-bottom: 10px;      
+    }
+    .card h2 {
+      font-size: 18px;
+      margin: 0 0 10px;
+    }
+    .card p {
+      font-size: 14px;
+      margin: 8px 0 16px;
+      color: #57606a;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      //margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background: #2da44e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    
+   .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #2575fc;
+      box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.2);
+    }
+    
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #57606a;
+    }
+    .footer a {
+      color: #57606a;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .notification {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        padding: 20px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .notification.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .notification.success {
+        background: var(--success);
+    }
+    .notification.error {
+        background: var(--danger);
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Category Registration</h1>
+        <div class="card">
+            <div class="icon">✉️</div>
+            <h2>Form</h2>
+            <p>Add a new category here, adding proper details.
+            </p>
+            <form id="form">
+              <div class="form-group">
+                <label for="id">Id</label>
+                <input type="number" id="id" placeholder="Category Id">
+              </div>
+              <div class="form-group">
+                <label for="code">Code</label>
+                <input type="text" id="code" placeholder="Category Code">
+              </div>
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Category Name">
+              </div>
+              <!-- <div class="form-group">
+                <label for="select">Select</label>
+                <select id="select">
+                  <option value="el">Elect</option>
+                </select>
+              </div> -->
+              <button type="submit" id="btn">Save</button>
+            </form>
+        </div>
+       
+        <div class="footer">
+          <a href="../index.html">Home</a>
+          <a href="index.html">Category</a>
+          <a href="../item/index.html">Item</a>
+          <a href="../dealer/index.html">Dealer</a>
+          <a href="../purchase/index.html">Purchases</a>
+          <a href="#">Category Form</a>
+          <a href="../item/form.html">Item Form</a>
+          <a href="../dealer/form.html">Dealer Form</a>
+          <a href="../purchase/form.html">Purchase Form</a>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
+    <script src="../js/ls.js"></script>
+    <script src="../js/notification.js"></script>
+    <script src="./form.js"></script>
+</body>
+</html>
