@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        #scanner {
+            width: 100%;
+            height: 400px;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        #scanner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        
+        .scanner-frame {
+            width: 70%;
+            height: 200px;
+            border: 3px solid #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ff3366, transparent);
+            top: 50%;
+            animation: scan 2s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { top: 10%; }
+            50% { top: 90%; }
+            100% { top: 10%; }
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #ff3366, #ff6b6b);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(255, 51, 102, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button.secondary {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.4);
+        }
+        
+        button.secondary:hover {
+            box-shadow: 0 7px 20px rgba(37, 117, 252, 0.6);
+        }
+        
+        button.success {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            box-shadow: 0 4px 15px rgba(0, 176, 155, 0.4);
+        }
+        
+        .input-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .input-section h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .manual-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .results {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .results h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        #result {
+            font-size: 1.2rem;
+            min-height: 30px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+        
+        .history {
+            margin-top: 20px;
+        }
+        
+        .history h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        #history-list {
+            list-style-type: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        #history-list li {
+            padding: 8px 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .barcode-type {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 15px 0;
+            font-style: italic;
+            min-height: 24px;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid #ff3366;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .scanner-frame {
+                width: 85%;
+                height: 150px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .manual-input {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Barcode Scanner</h1>
+        <p class="subtitle">Scan barcodes using camera or external scanner</p>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="camera">Camera Scanner</div>
+            <div class="tab" data-tab="manual">Manual Input</div>
+        </div>
+        
+        <div class="tab-content active" id="camera-tab">
+            <div class="scanner-container">
+                <div id="scanner">
+                    <div class="scanner-overlay">
+                        <div class="scanner-frame">
+                            <div class="scanner-line"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status" id="status">Click "Start Scanner" to begin</div>
+            
+            <div class="controls">
+                <button id="startButton">Start Scanner</button>
+                <button id="stopButton" class="secondary">Stop Scanner</button>
+                <button id="testButton" class="success">Test with Sample Barcode</button>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="manual-tab">
+            <div class="input-section">
+                <h2>Manual Barcode Input</h2>
+                <p>Use an external barcode scanner or type a barcode manually:</p>
+                <div class="manual-input">
+                    <input type="text" id="barcodeInput" placeholder="Scan or type barcode here">
+                    <button id="addBarcode">Add Barcode</button>
+                </div>
+                <p class="hint">Tip: If using an external scanner, just scan directly into the input field</p>
+            </div>
+        </div>
+        
+        <div class="results">
+            <h2>Scan Results</h2>
+            <div id="result">No barcode scanned yet</div>
+            
+            <div class="history">
+                <h3>Scan History</h3>
+                <ul id="history-list"></ul>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li><strong>Camera Scanner:</strong> Click "Start Scanner" to activate your camera and scan barcodes using your device camera</li>
+                <li><strong>External Scanner:</strong> Use the Manual Input tab and scan barcodes directly into the input field</li>
+                <li><strong>Manual Entry:</strong> Type barcodes manually and click "Add Barcode"</li>
+                <li>All scanned barcodes will appear in the results and history sections</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startButton = document.getElementById('startButton');
+            const stopButton = document.getElementById('stopButton');
+            const testButton = document.getElementById('testButton');
+            const addBarcodeButton = document.getElementById('addBarcode');
+            const barcodeInput = document.getElementById('barcodeInput');
+            const resultElement = document.getElementById('result');
+            const statusElement = document.getElementById('status');
+            const historyList = document.getElementById('history-list');
+            const scannerElement = document.getElementById('scanner');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            let isScanning = false;
+            let scanHistory = [];
+            
+            // Tab switching functionality
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show active tab content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-tab`) {
+                            content.classList.add('active');
+                        }
+                    });
+                    
+                    // If switching away from camera tab, stop scanner
+                    if (tabId !== 'camera' && isScanning) {
+                        stopScanner();
+                    }
+                });
+            });
+            
+            // Initialize QuaggaJS barcode scanner
+            function initScanner() {
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: scannerElement,
+                        constraints: {
+                            width: 640,
+                            height: 480,
+                            facingMode: "environment" // Use rear camera on mobile
+                        }
+                    },
+                    decoder: {
+                        readers: [
+                            "code_128_reader",
+                            "ean_reader",
+                            "ean_8_reader",
+                            "code_39_reader",
+                            "upc_reader",
+                            "upc_e_reader"
+                        ]
+                    },
+                    locator: {
+                        patchSize: "medium",
+                        halfSample: true
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.error(err);
+                        statusElement.textContent = "Error initializing scanner: " + err;
+                        return;
+                    }
+                    
+                    Quagga.start();
+                    statusElement.textContent = "Scanner started. Point camera at a barcode.";
+                });
+                
+                Quagga.onDetected(function(result) {
+                    if (isScanning) {
+                        const code = result.codeResult.code;
+                        const format = result.codeResult.format;
+                        
+                        displayResult(code, format);
+                        
+                        // Optional: Play sound on successful scan
+                        playBeepSound();
+                    }
+                });
+            }
+            
+            function startScanner() {
+                if (!isScanning) {
+                    isScanning = true;
+                    initScanner();
+                    startButton.disabled = true;
+                    stopButton.disabled = false;
+                }
+            }
+            
+            function stopScanner() {
+                if (isScanning) {
+                    isScanning = false;
+                    Quagga.stop();
+                    statusElement.textContent = "Scanner stopped";
+                    startButton.disabled = false;
+                    stopButton.disabled = true;
+                }
+            }
+            
+            function displayResult(code, format) {
+                resultElement.textContent = code;
+                statusElement.textContent = `Barcode detected: ${format}`;
+                
+                // Add to history
+                addToHistory(code, format);
+            }
+            
+            function addToHistory(code, format) {
+                const timestamp = new Date().toLocaleTimeString();
+                scanHistory.unshift({ code, format, timestamp });
+                
+                // Update history display (keep only last 5 items)
+                if (scanHistory.length > 5) {
+                    scanHistory = scanHistory.slice(0, 5);
+                }
+                
+                updateHistoryDisplay();
+            }
+            
+            function updateHistoryDisplay() {
+                historyList.innerHTML = '';
+                
+                scanHistory.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${item.code}</span>
+                        <span class="barcode-type">${item.format}</span>
+                        <span>${item.timestamp}</span>
+                    `;
+                    historyList.appendChild(li);
+                });
+            }
+            
+            function playBeepSound() {
+                // Create a simple beep sound using Web Audio API
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 800;
+                    gainNode.gain.value = 0.3;
+                    
+                    oscillator.start();
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                } catch (e) {
+                    console.log("Web Audio API not supported");
+                }
+            }
+            
+            // Event listeners
+            startButton.addEventListener('click', startScanner);
+            stopButton.addEventListener('click', stopScanner);
+            
+            testButton.addEventListener('click', function() {
+                // Generate a sample barcode for testing
+                const sampleBarcodes = [
+                    { code: '1234567890128', format: 'EAN-13' },
+                    { code: '12345678', format: 'EAN-8' },
+                    { code: 'ABCD1234', format: 'Code 39' },
+                    { code: '123456789', format: 'UPC' }
+                ];
+                
+                const randomBarcode = sampleBarcodes[Math.floor(Math.random() * sampleBarcodes.length)];
+                displayResult(randomBarcode.code, randomBarcode.format);
+                playBeepSound();
+            });
+            
+            addBarcodeButton.addEventListener('click', function() {
+                const code = barcodeInput.value.trim();
+                if (code) {
+                    displayResult(code, 'Manual Entry');
+                    barcodeInput.value = '';
+                    playBeepSound();
+                }
+            });
+            
+            // Allow Enter key to add barcode
+            barcodeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addBarcodeButton.click();
+                }
+            });
+            
+            // Focus on input when manual tab is selected
+            document.querySelector('.tab[data-tab="manual"]').addEventListener('click', function() {
+                setTimeout(() => {
+                    barcodeInput.focus();
+                }, 100);
+            });
+            
+            // Initialize with stop button disabled
+            stopButton.disabled = true;
+        });
+    </script>
+</body>
+</html>
