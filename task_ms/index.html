@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Monthly Calendar Task App</title>
+<style>
+	:root { --bg:#fff; --text:#222; --card:#f5f5f5; }
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 500px;
+        margin: 40px auto;
+        transition: 0.3s;
+    }
+
+    body.light { background: #ffffff; color: #000; }
+    body.dark { background: #121212; color: #fff; }
+
+    h2, h3 { text-align: center; }
+
+    #themeToggle {
+        float: right;
+        margin-bottom: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    /* Calendar */
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        margin-top: 20px;
+    }
+
+    .day-name {
+        text-align: center;
+        font-weight: bold;
+        padding: 5px 0;
+    }
+
+    .date {
+        text-align: center;
+        padding: 12px 0;
+        border-radius: 6px;
+        background: #e7e7e7;
+        cursor: pointer;
+    }
+
+    body.dark .date { background: #222; color: #ddd; }
+
+    .inactive {
+        opacity: 0.3;
+        cursor: default;
+    }
+
+    .active {
+        background: #4CAF50 !important;
+        color: #fff !important;
+    }
+
+    /* Tasks */
+    .task {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 5px;
+        background: #f3f3f3;
+    }
+
+    body.dark .task { background: #1e1e1e; }
+
+    .task span {
+        flex: 1;
+        margin-left: 10px;
+    }
+
+    .done {
+        text-decoration: line-through;
+        color: gray;
+    }
+
+    button {
+        padding: 4px 8px;
+        cursor: pointer;
+        border-radius: 4px;
+        border: none;
+		margin-right: 5px;
+    }
+
+    /* Navigation */
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+    }
+	
+	/* Edit popup */
+  #editPopup {
+	position:fixed; top:50%; left:50%;
+	transform:translate(-50%,-50%);
+	background:var(--card); padding:18px;
+	border-radius:10px; width:280px;
+	box-shadow:0 0 20px rgba(0,0,0,.3);
+	display:none;
+  }
+  #editPopup input, #editPopup select {
+	width:100%; padding:6px; margin-top:8px;
+	border-radius:6px; border:none;
+  }
+  #editPopup button { margin-top:10px; width:100%; }
+</style>
+</head>
+<body>
+
+<button id="themeToggle">🌙 Dark Mode</button>
+<h2>Monthly Task Calendar</h2>
+
+<div class="nav">
+    <button onclick="prevMonth()">⬅</button>
+    <h3 id="monthLabel"></h3>
+    <button onclick="nextMonth()">➡</button>
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+<h3 id="selectedDateLabel"></h3>
+
+<input id="taskInput" type="text" placeholder="Enter task" style="width:70%;">
+<button onclick="addTask()">Add</button>
+
+<div id="taskList"></div>
+
+
+<!-- Edit Popup -->
+<div id="editPopup">
+  <h3>Edit Task</h3>
+  <input id="editText" />
+  <button id="saveEditBtn">Save</button>
+  <button id="cancelEditBtn">Cancel</button>
+</div>
+
+<script>
+/* ----- State ----- */
+let editingIndex = null;
+const STORAGE_KEY = "tasks";
+let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+/* -------------------- THEME ----------------------- */
+//localStorage.setItem("tasks", '');
+const savedTheme = localStorage.getItem("theme") || "light";
+//const st = localStorage.getItem("tasks");
+document.body.className = savedTheme;
+updateToggleText();
+
+document.getElementById("themeToggle").onclick = () => {
+    const newTheme = document.body.classList.contains("light") ? "dark" : "light";
+    document.body.className = newTheme;
+    localStorage.setItem("theme", newTheme);
+    updateToggleText();
+};
+
+function updateToggleText() {
+    document.getElementById("themeToggle").textContent =
+        document.body.classList.contains("light")
+            ? "🌙 Dark Mode"
+            : "☀️ Light Mode";
+}
+
+/* -------------------- MONTH CALENDAR ----------------------- */
+let current = new Date();
+let selectedDate = new Date();
+
+selectedDate.setHours(0, 0, 0, 0);
+
+buildCalendar();
+
+function buildCalendar() {
+    const calendar = document.getElementById("calendar");
+    calendar.innerHTML = "";
+
+    const year = current.getFullYear();
+    const month = current.getMonth();
+
+    document.getElementById("monthLabel").textContent =
+        current.toLocaleString("en-US", { month: "long", year: "numeric" });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const prevMonthDays = new Date(year, month, 0).getDate();
+
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    dayNames.forEach(d => {
+        calendar.innerHTML += `<div class="day-name">${d}</div>`;
+    });
+
+    // Fill previous month blank days
+    for (let i = 0; i < firstDay; i++) {
+        calendar.innerHTML += `
+            <div class="date inactive">
+                ${prevMonthDays - firstDay + i + 1}
+            </div>`;
+    }
+
+    // Fill current month days
+    for (let i = 1; i <= totalDays; i++) {
+        const d = new Date(year, month, i);
+        const isToday = isSameDate(d, selectedDate);
+
+        calendar.innerHTML += `
+            <div class="date ${isToday ? "active" : ""}" onclick="selectDate(${year}, ${month}, ${i})">
+                ${i}
+            </div>`;
+    }
+
+    document.getElementById("selectedDateLabel").innerText =
+        "Tasks for: " + selectedDate.toDateString();
+}
+
+function prevMonth() {
+    current.setMonth(current.getMonth() - 1);
+    buildCalendar();
+    loadTasks();
+}
+
+function nextMonth() {
+    current.setMonth(current.getMonth() + 1);
+    buildCalendar();
+    loadTasks();
+}
+
+function selectDate(y, m, d) {
+    selectedDate = new Date(y, m, d);
+    selectedDate.setHours(0, 0, 0, 0);
+    buildCalendar();
+    loadTasks();
+}
+
+/* -------------------- TASK SYSTEM ----------------------- */
+function addTask() {
+    const text = document.getElementById("taskInput").value.trim();
+    if (text === "") return;
+
+    const tasks = getTasks();
+    const dateStr = selectedDate.toISOString().split("T")[0];
+
+    tasks.push({
+        text,
+        date: dateStr,
+        done: false
+    });
+
+    saveTasks(tasks);
+    document.getElementById("taskInput").value = "";
+    loadTasks();
+}
+
+function getTasks() {
+    return JSON.parse(localStorage.getItem("tasks") || "[]");
+}
+
+function saveTasks(tasks) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function toggleTask(index) {
+    const tasks = getTasks();
+    tasks[index].done = !tasks[index].done;
+    saveTasks(tasks);
+    loadTasks();
+}
+
+function updateTask(index) {
+    editingIndex = index;
+
+    const t = tasks[index];
+
+    editText.value = t.text;
+
+    editPopup.style.display="block"; 
+}
+
+/* Save edited task */
+document.getElementById("saveEditBtn").onclick = () => {
+
+  tasks[editingIndex].text = editText.value.trim();
+
+  saveTasks(tasks);
+  loadTasks();
+
+  editPopup.style.display="none";
+};
+
+/* Cancel edit */
+cancelEditBtn.onclick = () => {
+  editPopup.style.display="none";
+};
+
+function deleteTask(index) {
+    const tasks = getTasks();
+    tasks.splice(index, 1);
+    saveTasks(tasks);
+    loadTasks();
+}
+
+function loadTasks() {
+    const list = document.getElementById("taskList");
+    list.innerHTML = "";
+
+    const tasks = getTasks();
+    const dateStr = selectedDate.toISOString().split("T")[0];
+
+    tasks.forEach((task, index) => {
+        if (task.date === dateStr) {
+            list.innerHTML += `
+                <div class="task">
+                    <input type="checkbox" ${task.done ? "checked" : ""} onchange="toggleTask(${index})">
+                    <span class="${task.done ? "done" : ""}">${task.text}</span>
+					<button onclick="updateTask(${index})">✏️</button>
+                    <button onclick="deleteTask(${index})">❌</button>
+                </div>
+            `;
+        }
+    });
+}
+
+function isSameDate(a, b) {
+    return a.getFullYear() === b.getFullYear() &&
+           a.getMonth() === b.getMonth() &&
+           a.getDate() === b.getDate();
+}
+
+loadTasks();
+</script>
+
+</body>
+</html>
