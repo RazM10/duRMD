@@ -128,8 +128,7 @@
 <h3 id="selectedDateLabel"></h3>
 
 <input id="taskInput" type="text" placeholder="Enter task" style="width:70%;">
-<button onclick="addTask(true)">Add</button>
-<button onclick="addFixTasks()">FixTasks</button>
+<button onclick="addTask()">Add</button>
 
 <div id="taskList"></div>
 
@@ -147,8 +146,6 @@
 let editingIndex = null;
 const STORAGE_KEY = "tasks";
 let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-
-var data = "";
 
 /* -------------------- THEME ----------------------- */
 //localStorage.setItem("tasks", '');
@@ -241,15 +238,9 @@ function selectDate(y, m, d) {
 }
 
 /* -------------------- TASK SYSTEM ----------------------- */
-function addTask(cmd) {
-	
-	var text = "";
-    if(cmd){
-		text = document.getElementById("taskInput").value.trim();
-		if (text === "") return;
-	} else {
-		text = data;
-	}
+function addTask() {
+    const text = document.getElementById("taskInput").value.trim();
+    if (text === "") return;
 
     const tasks = getTasks();
     const dateStr = selectedDate.toISOString().split("T")[0];
@@ -338,15 +329,6 @@ function isSameDate(a, b) {
     return a.getFullYear() === b.getFullYear() &&
            a.getMonth() === b.getMonth() &&
            a.getDate() === b.getDate();
-}
-
-// add fix Tasks
-function addFixTasks() {
-	const fixTasks = ["Fajr Salah", "Dhuhr Salah", "Asr Salah", "Maghrib Salah", "Isha Salah"];
-	for (i = 0; i < fixTasks.length; i++) {
-		data = fixTasks[i];
-		addTask(false);
-	}
 }
 
 loadTasks();
