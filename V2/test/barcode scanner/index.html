@@ -1,1 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone Barcode Scanner</title>
+
+<script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #172033;
+}
+
+.container {
+  max-width: 450px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 5px 25px #0001;
+  text-align: center;
+}
+
+h2 { margin-top: 5px; }
+
+#video {
+  width: 100%;
+  max-height: 300px;
+  background: #111;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+button {
+  border: 0;
+  padding: 13px 16px;
+  margin: 6px 3px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  color: white;
+  background: #2563eb;
+}
+
+.stop { background: #dc2626; }
+.copy { background: #15803d; }
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #eff6ff;
+  overflow-wrap: anywhere;
+}
+
+#barcodeResult {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+#status {
+  color: #64748b;
+  font-size: 14px;
+  margin: 12px 0;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h2>📷 Barcode Scanner</h2>
+  <p>Point your phone camera at a barcode.</p>
+
+  <video id="video" muted playsinline></video>
+
+  <div>
+    <button onclick="startScanner()">Start Scanner</button>
+    <button class="stop" onclick="stopScanner()">Stop</button>
+  </div>
+
+  <p id="status">Ready to scan</p>
+
+  <div class="result">
+    <div>Scanned Barcode</div>
+    <div id="barcodeResult">No barcode yet</div>
+    <div id="format"></div>
+    <button class="copy" onclick="copyBarcode()">Copy Code</button>
+  </div>
+</div>
+
+<script>
+let reader = null;
+let controls = null;
+let lastCode = "";
+
+async function startScanner() {
+  stopScanner();
+
+  if (!window.isSecureContext) {
+    document.getElementById("status").textContent =
+      "Camera requires HTTPS or localhost.";
+    return;
+  }
+
+  try {
+    reader = new ZXing.BrowserMultiFormatReader();
+
+    document.getElementById("status").textContent =
+      "Requesting camera permission...";
+
+    controls = await reader.decodeFromVideoDevice(
+      undefined,
+      "video",
+      (result, error, scanControls) => {
+        if (result) {
+          lastCode = result.getText();
+
+          document.getElementById("barcodeResult").textContent =
+            lastCode;
+
+          document.getElementById("format").textContent =
+            "Format: " + result.getBarcodeFormat();
+
+          document.getElementById("status").textContent =
+            "Barcode scanned successfully!";
+
+          // Keep scanning for the next barcode.
+        }
+      }
+    );
+
+    document.getElementById("status").textContent =
+      "Camera active — point at a barcode.";
+  } catch (error) {
+    document.getElementById("status").textContent =
+      "Camera error: " + error.message +
+      ". Allow camera access and use HTTPS.";
+  }
+}
+
+function stopScanner() {
+  if (controls) {
+    controls.stop();
+    controls = null;
+  }
+
+  if (reader) {
+    reader.reset();
+    reader = null;
+  }
+
+  const video = document.getElementById("video");
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(track => track.stop());
+    video.srcObject = null;
+  }
+}
+
+async function copyBarcode() {
+  if (!lastCode) {
+    alert("Please scan a barcode first.");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(lastCode);
+    alert("Barcode copied: " + lastCode);
+  } catch {
+    alert("Copy failed. Barcode: " + lastCode);
+  }
+}
+
+window.addEventListener("pagehide", stopScanner);
+</script>
+</body>
+</html>
 
