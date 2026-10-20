@@ -101,6 +101,11 @@ let reader = null;
 let controls = null;
 let lastCode = "";
 
+/* 🔊 BEEP */
+function playBeep(){
+  new Audio("https://actions.google.com/sounds/v1/beeps/beep_short.ogg").play()
+}
+
 async function startScanner() {
   stopScanner();
 
@@ -122,7 +127,8 @@ async function startScanner() {
       (result, error, scanControls) => {
         if (result) {
           lastCode = result.getText();
-
+          
+          playBeep();
           document.getElementById("barcodeResult").textContent =
             lastCode;
 
@@ -182,4 +188,3 @@ window.addEventListener("pagehide", stopScanner);
 </script>
 </body>
 </html>
-
